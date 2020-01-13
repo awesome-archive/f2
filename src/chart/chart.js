@@ -187,8 +187,8 @@ class Chart extends Base {
     max = Math.max.apply(null, max);
 
     Util.each(syncScales, scale => {
-      scale.min = min;
-      scale.max = max;
+      scale.change({ min });
+      scale.change({ max });
     });
   }
 
@@ -386,6 +386,7 @@ class Chart extends Base {
         fontFamily: Global.fontFamily
       });
       self.set('canvas', canvas);
+      self.set('el', canvas.get('el'));
       self.set('width', canvas.get('width'));
       self.set('height', canvas.get('height'));
     } catch (error) {
@@ -749,7 +750,8 @@ class Chart extends Base {
       const colorAttr = geom.getAttr('color');
       if (colorAttr) {
         const scale = colorAttr.getScale('color');
-        if (scale.type !== 'identity' && !_isScaleExist(scales, scale)) {
+        // 只支持分类图例
+        if (scale.isCategory && !_isScaleExist(scales, scale)) {
           scales.push(scale);
 
           const field = scale.field;

@@ -52,6 +52,18 @@ const ScaleTen = new Scale.Identity({
   field: '10',
   value: 10
 });
+
+const scaleShapePyramid = new Scale.Identity({
+  field: 'pyramid',
+  value: 'pyramid'
+});
+
+const scaleShapeFunnel = new Scale.Identity({
+  field: 'funnel',
+  value: 'funnel'
+});
+
+
 const coord = new Coord.Rect({
   start: {
     x: 0,
@@ -111,12 +123,9 @@ describe('test geoms', function() {
 
     it('other attrs', function() {
       geom.color('red')
-          .shape('a', [ 'circle', 'rect' ])
-          .size('b', function() {
-
-          });
+        .shape('a', [ 'circle', 'rect' ])
+        .size('b', function() {});
       const attrOptions = geom.get('attrOptions');
-      // debugger;
       expect(attrOptions.color.field).eqls('red');
       expect(attrOptions.color.values).eqls(Global.colors);
       expect(attrOptions.shape).eqls({ field: 'a', values: [ 'circle', 'rect' ] });
@@ -204,6 +213,36 @@ describe('test geoms', function() {
       expect(arr.length).equal(2);
       expect(arr[0][0].c).equal('2');
       expect(arr[1][0].c).equal('1');
+    });
+
+    it('test group data with undefined values in group', function() {
+      geom.set('colDefs', {});
+      const data = [
+        // 相关数据
+        { a: 1, b: 1, c: '指标1' },
+        { a: 2, b: 2, c: '指标1' },
+        { a: 3, b: 3, c: '指标1' },
+        { a: 1, b: 2, c: '指标2' },
+        { a: 2, b: 3, c: '指标2' },
+        { a: 3, b: 4, c: '指标2' },
+        // 无关数据
+        { a: 1, b1: 3, c: '指标3' },
+        { a: 2, b1: 2, c: '指标3' },
+        { a: 3, b1: 1, c: '指标3' },
+        { a: 1, b1: 4, c: '指标4' },
+        { a: 2, b1: 3, c: '指标4' },
+        { a: 3, b1: 2, c: '指标4' }
+      ];
+      geom.set('data', data);
+      geom.position('a*b').color('c');
+      geom.init();
+      const dataArray = geom.get('dataArray');
+      expect(dataArray.length).equal(4);
+
+      geom.set('ignoreEmptyGroup', true);
+      geom.init();
+      const dataArray1 = geom.get('dataArray');
+      expect(dataArray1.length).equal(2);
     });
 
     it('destroy', function() {
@@ -493,13 +532,12 @@ describe('test geom line', function() {
 
 describe('test geom area', function() {
   const data = [
-      { a: '1', b: 2, c: '1' },
-      { a: '2', b: 5, c: '1' },
-      { a: '3', b: 4, c: '1' },
-
-      { a: '1', b: 3, c: '2' },
-      { a: '2', b: 1, c: '2' },
-      { a: '3', b: 2, c: '2' }
+    { a: '1', b: 2, c: '1' },
+    { a: '2', b: 5, c: '1' },
+    { a: '3', b: 4, c: '1' },
+    { a: '1', b: 3, c: '2' },
+    { a: '2', b: 1, c: '2' },
+    { a: '3', b: 2, c: '2' }
   ];
   let geom;
   it('create area', function() {
@@ -567,19 +605,18 @@ describe('test geom area', function() {
 
 describe('test geom interval', function() {
   const data = [
-      { a: '1', b: 2, c: '1' },
-      { a: '2', b: 5, c: '1' },
-      { a: '3', b: 4, c: '1' }
+    { a: '1', b: 2, c: '1' },
+    { a: '2', b: 5, c: '1' },
+    { a: '3', b: 4, c: '1' }
   ];
 
   const data1 = [
-      { a: '1', b: 2, c: '1' },
-      { a: '2', b: 5, c: '1' },
-      { a: '3', b: 4, c: '1' },
-
-      { a: '1', b: 3, c: '2' },
-      { a: '2', b: 1, c: '2' },
-      { a: '3', b: 2, c: '2' }
+    { a: '1', b: 2, c: '1' },
+    { a: '2', b: 5, c: '1' },
+    { a: '3', b: 4, c: '1' },
+    { a: '1', b: 3, c: '2' },
+    { a: '2', b: 1, c: '2' },
+    { a: '3', b: 2, c: '2' }
   ];
 
   scaleA = new Scale.Cat({
@@ -592,7 +629,7 @@ describe('test geom interval', function() {
     data,
     coord,
     container: canvas.addGroup(),
-    scales: { a: scaleA, b: scaleB, c: scaleC, red: ScaleRed, 10: ScaleTen }
+    scales: { a: scaleA, b: scaleB, c: scaleC, red: ScaleRed, 10: ScaleTen, pyramid: scaleShapePyramid, funnel: scaleShapeFunnel }
   });
   it('draw interval', function() {
     clearCanvas(canvas);
@@ -617,7 +654,6 @@ describe('test geom interval', function() {
     geom.paint();
 
     expect(geom.getSize()).equal((500) / 3 / 4);
-
   });
 
   it('custom size', function() {
@@ -642,6 +678,36 @@ describe('test geom interval', function() {
     geom.init();
     geom.paint();
     expect(geom.getSize()).equal(500 / 6);
+  });
+
+  it('shape pyramid', function() {
+    clearCanvas(canvas);
+    geom.reset();
+    geom.position('a*b').color('c').adjust('symmetric');
+    geom.set('data', data1);
+    geom.shape('pyramid');
+    geom.init();
+    geom.paint();
+
+    const container = geom.get('container');
+    const children = container.get('children');
+    expect(children.length).equal(6);
+    expect(children[0].get('attrs').points.length).equal(4);
+    expect(children[children.length - 1].get('attrs').points.length).equal(3);
+  });
+
+  it('shape funnel', function() {
+    clearCanvas(canvas);
+    geom.reset();
+    geom.position('a*b').color('c').adjust('symmetric');
+    geom.set('data', data1);
+    geom.shape('funnel');
+    geom.init();
+    geom.paint();
+
+    const container = geom.get('container');
+    const children = container.get('children');
+    expect(children[children.length - 1].get('attrs').points.length).equal(4);
   });
 
   it('polar coord, draw interval', function() {
@@ -718,8 +784,8 @@ describe('test geom interval', function() {
 
 describe('test polygon', function() {
   const data = [
-      { x: [ 1, 2, 2, 1 ], y: [ 0, 0, 2, 1 ] },
-      { x: [ 4, 3, 4, 2 ], y: [ 0, 0, 2, 4 ] }
+    { x: [ 1, 2, 2, 1 ], y: [ 0, 0, 2, 1 ] },
+    { x: [ 4, 3, 4, 2 ], y: [ 0, 0, 2, 4 ] }
   ];
   const data1 = [{
     a: '1', b: '1', c: 10

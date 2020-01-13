@@ -1,3 +1,138 @@
+#### 3.5.0 (2020-01-12)
+
+##### Chores
+
+*  npm包添加src源文件 ([16d026c4](https://github.com/antvis/f2/commit/16d026c45461c0d9848199c9beb4db74d2d6f8e2))
+* **deps:**  upgrade eslint 3.19.0 to 6.7.2 ([234edfc1](https://github.com/antvis/f2/commit/234edfc1d23d9d4962f768c68e82070523fb1f89))
+* **deps-dev:**  bump open from 0.0.5 to 7.0.0 ([cba92c2a](https://github.com/antvis/f2/commit/cba92c2adb24c1d73f42e5cbd0236bd5406d43f6))
+
+##### Documentation Changes
+
+*  添加filter的使用说明 ([79038d47](https://github.com/antvis/f2/commit/79038d47d1c976494d05ac2c1f269ee703e34acf))
+
+##### New Features
+
+*  添加漏斗图 ([47c8a233](https://github.com/antvis/f2/commit/47c8a233d802a7546ffa5af826101a456d470f80))
+*  多端多环境的适配与支持 ([458c3fbf](https://github.com/antvis/f2/commit/458c3fbf576b3123a1527adc5f7fbb99a0762c7d))
+
+##### Bug Fixes
+
+*  未设置geometry时，clear报错 ([065c7ea3](https://github.com/antvis/f2/commit/065c7ea3b77a175ffdc3b582ce9d9490cb57efbb))
+*  修复非浏览器环境时，currentStyle报错 ([f90affa3](https://github.com/antvis/f2/commit/f90affa3440e6c18a118400305aa62ae60e66b5e))
+
+##### Refactors
+
+*  去掉eventemitter，只要简单的事件处理就可以了 ([b63c63a6](https://github.com/antvis/f2/commit/b63c63a600d900253d6a1ce982a894639770b541))
+
+#### 3.4.4 (2019-12-06)
+
+##### Documentation Changes
+
+*  update links in README ([e6f8bba5](https://github.com/antvis/f2/commit/e6f8bba55e79fff9ad4fa55145e2ebad4e2d0388))
+*  fix example throws error ([c2072b91](https://github.com/antvis/f2/commit/c2072b91f69d7e5e17e61f3b9e8593d9276a0b37))
+
+##### New Features
+
+* **GeomBase:**  add ignoreEmptyGroup config to geom base ([bb1b0107](https://github.com/antvis/f2/commit/bb1b010720694220255d322e522b05329ffbe265))
+
+##### Bug Fixes
+
+* 滑动x轴时，cat的ticks会被置成null ([49d4a86b](https://github.com/antvis/f2/commit/49d4a86b1d7f916296b9cb809195fbea55d4b9c4))
+* 修复Shape.Text 在设置 rotate 之后 Box 宽高不正确的问题 ([27e3eec](https://github.com/antvis/f2/commit/27e3eecc3c33b646eef5f5f73ad54587410a254f))
+
+#### 3.4.3 (2019-11-20)
+
+##### Bug Fixes
+
+* 修复只有1个点时，tooltip不显示的问题 ([da62475](https://github.com/antvis/f2/commit/da624751e72fb74351f3278444ed5ec5977915cb))
+* 修复多类型换图点击选中的问题 ([10c4b04](https://github.com/antvis/f2/commit/10c4b0416ae9f2b18c8aa98e055f0948755adc2b))
+
+
+#### 3.4.2 (2019-10-15)
+
+##### Chores
+
+*  发布时候babelrc & webpackrc & lintrc都带上了 这会影响工程本身 ([4c6f3b47](https://github.com/antvis/f2/commit/4c6f3b47963638f1cd0e4ab385fd3b790967d874))
+
+##### New Features
+
+*  默认增加guide point插件 ([28d9e0c4](https://github.com/antvis/f2/commit/28d9e0c4778280fc04b037420b51f4231ce5855a))
+
+##### Bug Fixes
+
+*  图例只支持分类数据 ([bfe50422](https://github.com/antvis/f2/commit/bfe5042207c916e17a1143329fd8cd123a077053))
+*  修复图例过滤不考虑空数据的问题。 ([78ee9fca](https://github.com/antvis/f2/commit/78ee9fcaf6c2b657a05cbeaa6f696ff9a407f8c1))
+*  Guide 的 position 百分比解析需要考虑原始数据中本身包含 '%' 的情况.Closed [#590](https://github.com/antvis/f2/pull/590). ([b299390c](https://github.com/antvis/f2/commit/b299390c45bb1c61ea2bb453b3cd5de8dff18db3))
+
+#### 3.3.8 (2019-04-02)
+
+##### Bug Fixes
+
+* 当只有1个扇形时，角度计算-6.285040585751744e-7和0，相减小于0.0001，也不绘制
+
+#### 3.3.7 (2019-03-15)
+
+##### Bug Fixes
+
+* **bbox.js:**  getBBoxFromArc方法对于整圆的判断错误，导致半圆弧的最小包围盒计算错误 ([8763929f](https://github.com/antvis/f2/commit/8763929f71b6f7620044e2be662fb7fe41da5253))
+*  fix the error when pie chart data difference is very large. Closed [#514](https://github.com/antvis/f2/pull/514) ([b3bf2932](https://github.com/antvis/f2/commit/b3bf293253ddcf91ca43de19105a856ea0f123ff))
+*  add null value judgment to prevent error. ([c9be938a](https://github.com/antvis/f2/commit/c9be938a864264167c1d2a0a6aeae2beb754d824))
+
+##### Other Changes
+
+*  update @antv/scale version ([b09219ef](https://github.com/antvis/f2/commit/b09219ef066f1df5d5884e33e9d0ca8760288fe5))
+*  update @antv/scale version ([002b4b71](https://github.com/antvis/f2/commit/002b4b712799fecf6c29bd3569e6a74037fc82f8))
+
+#### 3.3.5 (2019-02-11)
+
+##### Chores
+
+*  npm publish ignore src folder. Closed [#472](https://github.com/antvis/f2/pull/472) ([7e4a7616](https://github.com/antvis/f2/commit/7e4a7616728497899d662bf9f544db2a42f80aae))
+
+##### New Features
+
+*  add `shadow` graphic property for ant-mini-program. Closed [#486](https://github.com/antvis/f2/pull/486) ([b558eada](https://github.com/antvis/f2/commit/b558eada94993267e6c5c67190f1b93abfcf9152))
+
+##### Bug Fixes
+
+*  legend filter should work during pan or pinch. Closed [#467](https://github.com/antvis/f2/pull/467) ([3be0359f](https://github.com/antvis/f2/commit/3be0359f57fa92745aeb2d20fd24e432cb25e454))
+*  should filter the points when calculate the polyline shape's bounding box. Closed [#468](https://github.com/antvis/f2/pull/468) ([00883059](https://github.com/antvis/f2/commit/00883059895ec7246676185ab670eaed167eff36))
+
+##### Other Changes
+
+*  update @antv/adjust version. Related to [#488](https://github.com/antvis/f2/pull/488) ([41a93d8c](https://github.com/antvis/f2/commit/41a93d8cf4eadae11890bdef65b1f2d4686cf7e9))
+
+##### Tests
+
+*  add test case for issue 488, the bug has fixed at https://github.com/antvis/adjust/pull/2, Closed [#488](https://github.com/antvis/f2/pull/488). ([e4381e0a](https://github.com/antvis/f2/commit/e4381e0a553f39d4bc390ebb1dc3edbefdfbc887))
+
+#### 3.3.4 (2018-12-27)
+
+##### Chores
+
+*  close F2.track(). ([ae6331b5](https://github.com/antvis/f2/commit/ae6331b5152bdde3ca763b4886997213e29bce7b))
+
+#### 3.3.3 (2018-12-20)
+
+##### New Features
+
+* **tooltip:**  miniprogram support xTip. ([e9115c38](https://github.com/antvis/f2/commit/e9115c385d09c04b670e9970b496e5f1f58698be))
+
+#### 3.3.2 (2018-12-19)
+
+##### New Features
+
+* add label1offsetY, label2OffsetY to adjust label position for pie-label. ([7cac3ce4](https://github.com/antvis/f2/commit/7cac3ce4f25171de03063012367bfaccad837043))
+
+##### Bug Fixes
+
+* Guide.Point, fix the bug caused by parsePoint() return null. Closed [#458](https://github.com/antvis/f2/pull/458). ([2edbb03f](https://github.com/antvis/f2/commit/2edbb03f243cfaf564f4c9e41e946627070042e7))
+* pieLabel getBBox() should compact node and mini program env. Closed [#448](https://github.com/antvis/f2/pull/448). ([29ebd491](https://github.com/antvis/f2/commit/29ebd491746910e692ff4d3d8b00e7ff41d5cb71))
+* fix the bug that axis configuration not work when data is empty. Closed [#439](https://github.com/antvis/f2/pull/439). ([594e4f84](https://github.com/antvis/f2/commit/594e4f84344f557814b9c788c65cb7d2b410b81e))
+* fix the bug that grid callback return null did not work. Closed [#437](https://github.com/antvis/f2/pull/437) ([717f2bf6](https://github.com/antvis/f2/commit/717f2bf664f02ffc5ef402db12b22412288a086e))
+* **syncYScales:** scale should re-calculate the ticks ([ef68c0c8](https://github.com/antvis/f2/commit/ef68c0c84e46ebbd0b919d4db459a14ff5cc9ee7))
+
+
 #### 3.3.1 (2018-11-30)
 
 ##### Bug Fixes

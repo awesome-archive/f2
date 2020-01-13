@@ -71,7 +71,9 @@ class Geom extends Base {
       sortable: false,
       startOnZero: true,
       visible: true,
-      connectNulls: false
+      connectNulls: false,
+      // 是否丢弃没有值的分组。
+      ignoreEmptyGroup: false
     };
   }
 
@@ -196,7 +198,13 @@ class Geom extends Base {
     const self = this;
     const data = this.get('data');
     const dataArray = [];
-    const groupedArray = this._groupData(data);
+    let groupedArray = this._groupData(data);
+    if (this.get('ignoreEmptyGroup')) {
+      const yScale = this.getYScale();
+      groupedArray = groupedArray.filter(group =>
+        group.some(item => typeof item[yScale.field] !== 'undefined')
+      );
+    }
     for (let i = 0, len = groupedArray.length; i < len; i++) {
       const subData = groupedArray[i];
       const tempData = self._saveOrigin(subData);
@@ -341,6 +349,7 @@ class Geom extends Base {
       const newRecord = {};
       newRecord[FIELD_ORIGIN] = record[FIELD_ORIGIN];
       newRecord.points = record.points;
+      newRecord.nextPoints = record.nextPoints;
       // 避免
       newRecord[FIELD_ORIGIN_Y] = record[yField];
       for (const k in attrs) {
@@ -400,6 +409,13 @@ class Geom extends Base {
       Util.each(dataArray, function(data) {
         self._generatePoints(data);
       });
+      // 添加nextPoints
+      Util.each(dataArray, (data, index) => {
+        const nextData = dataArray[index + 1];
+        if (nextData) {
+          data[0].nextPoints = nextData[0].points;
+        }
+      });
     }
   }
 
@@ -445,6 +461,7 @@ class Geom extends Base {
     }
     if (self.get('generatePoints')) {
       cfg.points = obj.points;
+      cfg.nextPoints = obj.nextPoints;
     }
     if (isInCircle) {
       cfg.center = self.get('coord').center;
@@ -590,12 +607,19 @@ class Geom extends Base {
         return a - b;
       });
       for (let len = values.length; i < len; i++) {
+        // 如果只有1个点直接返回第1个点
+        if (len <= 1) {
+          break;
+        }
+        // 第1个点和第2个点之间
         if ((values[0] + values[1]) / 2 > item) {
           break;
         }
+        // 中间的点
         if ((values[i - 1] + values[i]) / 2 <= item && (values[i + 1] + values[i]) / 2 > item) {
           break;
         }
+        // 最后2个点
         if ((values[values.length - 2] + values[values.length - 1]) / 2 <= item) {
           i = values.length - 1;
           break;
@@ -642,7 +666,7 @@ class Geom extends Base {
     });
 
     // special for pie chart
-    if (this.hasAdjust('stack') && coord.isPolar && coord.transposed && xScale.values.length === 1) {
+    if (this.hasAdjust('stack') && coord.isPolar && coord.transposed) {
       if (invertPointX >= 0 && invertPointX <= 1) {
         let yValue = yScale.invert(invertPoint.y);
         yValue = self._getSnap(yScale, yValue, tmp);

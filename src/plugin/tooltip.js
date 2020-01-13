@@ -187,33 +187,35 @@ class TooltipController {
     const coord = chart.get('coord');
 
     const defaultCfg = self._setCrosshairsCfg();
-    let cfg = self.cfg;
-    cfg = Util.deepMix({
+    const cfg = self.cfg; // 通过 chart.tooltip() 接口传入的 tooltip 配置项
+    const tooltipCfg = Util.deepMix({
       plotRange,
       frontPlot,
       backPlot,
       canvas,
       fixed: coord.transposed || coord.isPolar
-    }, defaultCfg, cfg);
-    cfg.maxLength = self._getMaxLength(cfg);
-    this.cfg = cfg;
-    const tooltip = new Tooltip(cfg);
+    }, defaultCfg, cfg); // 创建 tooltip 实例需要的配置，不应该修改 this.cfg，即用户传入的配置
+    tooltipCfg.maxLength = self._getMaxLength(tooltipCfg);
+    this._tooltipCfg = tooltipCfg;
+    const tooltip = new Tooltip(tooltipCfg);
     self.tooltip = tooltip;
     self.bindEvents();
   }
 
   clear() {
     const tooltip = this.tooltip;
-    tooltip && tooltip.destroy();
+    if (tooltip) {
+      tooltip.destroy();
+      this.unBindEvents();
+    }
     this.tooltip = null;
     this.prePoint = null;
     this._lastActive = null;
-    this.unBindEvents();
   }
 
   _getTooltipMarkerStyle(cfg = {}) {
     const { type, items } = cfg;
-    const tooltipCfg = this.cfg;
+    const tooltipCfg = this._tooltipCfg;
     if (type === 'rect') {
       let x;
       let y;
@@ -259,7 +261,7 @@ class TooltipController {
   _setTooltip(point, items, tooltipMarkerCfg = {}) {
     const lastActive = this._lastActive;
     const tooltip = this.tooltip;
-    const cfg = this.cfg;
+    const cfg = this._tooltipCfg;
     items = _uniqItems(items);
 
     const chart = this.chart;
@@ -374,7 +376,7 @@ class TooltipController {
     let tooltipMarkerType;
     const tooltipMarkerItems = [];
     const items = [];
-    const cfg = self.cfg;
+    const cfg = self._tooltipCfg;
     let marker;
     if (cfg.showItemMarker) {
       marker = cfg.itemMarkerStyle;
@@ -386,6 +388,11 @@ class TooltipController {
       if (geom.get('visible')) {
         const type = geom.get('type');
         const records = geom.getSnapRecords(point);
+        const adjust = geom.get('adjust');
+        // 漏斗图和金子塔图tooltip位置有问题，暂时不开放显示
+        if (type === 'interval' && adjust && adjust.type === 'symmetric') {
+          return;
+        }
         Util.each(records, record => {
           if (record.x && record.y) {
             const { x, y, _origin, color } = record;
@@ -430,7 +437,7 @@ class TooltipController {
   }
 
   hideTooltip() {
-    const cfg = this.cfg;
+    const cfg = this._tooltipCfg;
     this._lastActive = null;
     const tooltip = this.tooltip;
     if (tooltip) {
@@ -451,7 +458,7 @@ class TooltipController {
 
     const plot = chart.get('plotRange');
     const point = Util.createEvent(ev, chart);
-    if (!Helper.isPointInPlot(point, plot) && !this.cfg.alwaysShow) { // not in chart plot
+    if (!Helper.isPointInPlot(point, plot) && !this._tooltipCfg.alwaysShow) { // not in chart plot
       this.hideTooltip();
       return;
     }
@@ -471,17 +478,6 @@ class TooltipController {
     this.hideTooltip();
   }
 
-  handleDocEvent(ev) {
-    const chart = this.chart;
-    if (!this.enable || chart.get('_closeTooltip')) return;
-
-
-    const canvasDom = this.canvasDom;
-    if (ev.target !== canvasDom) {
-      this.hideTooltip();
-    }
-  }
-
   _handleEvent(methodName, method, action) {
     const canvasDom = this.canvasDom;
     Util.each([].concat(methodName), aMethod => {
@@ -494,22 +490,23 @@ class TooltipController {
   }
 
   bindEvents() {
-    const cfg = this.cfg;
+    const cfg = this._tooltipCfg;
+    const canvasElement = this.canvasDom;
     const { triggerOn, triggerOff, alwaysShow } = cfg;
     const showMethod = Util.wrapBehavior(this, 'handleShowEvent');
     const hideMethod = Util.wrapBehavior(this, 'handleHideEvent');
 
     triggerOn && this._handleEvent(triggerOn, showMethod, 'bind');
     triggerOff && this._handleEvent(triggerOff, hideMethod, 'bind');
-    // TODO: 当用户点击 canvas 外的事件时 tooltip 消失
-    if (!alwaysShow) {
-      const docMethod = Util.wrapBehavior(this, 'handleDocEvent');
-      Util.isBrowser && Util.addEventListener(document, 'touchstart', docMethod);
+    // 如果 !alwaysShow, 则在手势离开后就隐藏
+    if (!alwaysShow && !triggerOff) {
+      Util.addEventListener(canvasElement, 'touchend', hideMethod);
     }
   }
 
   unBindEvents() {
-    const cfg = this.cfg;
+    const cfg = this._tooltipCfg;
+    const canvasElement = this.canvasDom;
     const { triggerOn, triggerOff, alwaysShow } = cfg;
     const showMethod = Util.getWrapBehavior(this, 'handleShowEvent');
     const hideMethod = Util.getWrapBehavior(this, 'handleHideEvent');
@@ -519,7 +516,7 @@ class TooltipController {
 
     if (!alwaysShow) {
       const docMethod = Util.getWrapBehavior(this, 'handleDocEvent');
-      Util.isBrowser && Util.removeEventListener(document, 'touchstart', docMethod);
+      Util.removeEventListener(canvasElement, 'touchend', docMethod);
     }
   }
 }

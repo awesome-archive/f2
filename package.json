@@ -1,6 +1,6 @@
 {
   "name": "@antv/f2",
-  "version": "3.3.2-beta.1",
+  "version": "3.5.0",
   "description": "Charts for mobile visualization.",
   "keywords": [
     "f2",
@@ -20,12 +20,21 @@
   "author": "https://github.com/orgs/antvis/people",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antvis/f2.git"
+    "url": "https://github.com/antvis/f2"
   },
   "bugs": {
     "url": "https://github.com/antvis/f2/issues"
   },
+  "files": [
+    "src",
+    "lib",
+    "build",
+    "dist",
+    "bundler"
+  ],
   "devDependencies": {
+    "@antv/data-set": "^0.10.2",
+    "@antv/gatsby-theme-antv": "^0.10.17",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
@@ -33,6 +42,7 @@
     "babel-eslint": "~7.2.3",
     "babel-loader": "^8.0.0",
     "babel-plugin-transform-remove-strict-mode": "~0.0.2",
+    "babel-preset-gatsby": "^0.2.20",
     "body-parser": "^1.18.2",
     "chai": "~4.0.1",
     "commander": "~2.9.0",
@@ -40,24 +50,30 @@
     "d3-queue": "~3.0.7",
     "debug": "~3.1.0",
     "electron": "~1.8.2-beta5",
-    "eslint": "~3.19.0",
-    "eslint-config-airbnb": "~15.0.1",
+    "eslint": "^6.7.2",
     "eslint-config-egg": "~4.2.0",
-    "eslint-plugin-html": "~3.1.1",
+    "gatsby": "^2.17.7",
     "get-port": "~3.1.0",
+    "gh-pages": "^2.1.1",
     "jquery": "^3.3.1",
     "jszip": "^3.1.5",
     "nightmare": "~2.10.0",
     "nunjucks": "~3.0.1",
-    "open": "~0.0.5",
+    "open": "~7.0.0",
     "parseurl": "~1.3.1",
     "pre-commit": "~1.2.2",
+    "react-i18next": "^11.0.1",
     "serve-static": "~1.12.4",
     "shelljs": "~0.7.8",
     "uglify-js": "~3.0.15",
     "webpack": "~3.4.1"
   },
   "scripts": {
+    "start": "npm run site:develop",
+    "site:develop": "gatsby develop --open",
+    "site:build": "npm run site:clean && gatsby build --prefix-paths",
+    "site:clean": "gatsby clean",
+    "site:deploy": "npm run site:build && gh-pages -d public",
     "build": "webpack",
     "build-lib": "babel src --out-dir lib",
     "bundler": "electron ./bundler/app.js",
@@ -89,10 +105,11 @@
     "silent": false
   },
   "dependencies": {
-    "@antv/adjust": "~0.0.3",
-    "@antv/attr": "~0.0.3",
-    "@antv/scale": "~0.0.6",
+    "@antv/adjust": "~0.1.1",
+    "@antv/attr": "~0.1.0",
+    "@antv/scale": "~0.1.2",
     "@antv/util": "~1.2.5",
+    "@babel/runtime": "^7.7.7",
     "hammerjs": "^2.0.8"
   }
 }
