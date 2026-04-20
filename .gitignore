@@ -7,6 +7,9 @@ yarn-error.log*
 
 # lock
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
+*/pnpm-lock.yaml
 
 # Runtime data
 pids
@@ -38,6 +41,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+miniprogram_npm
 
 # Typescript v1 declaration files
 typings/
@@ -63,13 +67,22 @@ typings/
 build
 dist
 lib
+es
 temp
 .DS_Store
 .vscode
 .idea
+es5/
+es6/
+es/
 demos/index.html
 demos/assets/screenshots
 demos/debug.html
+.npmrc
 
 *.sw*
 *.un~
+public
+.cache
+.history
+.lh
